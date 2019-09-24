@@ -12,3 +12,16 @@
 .ui.items>.item>.image>img {
   border-radius: 5px;
 }
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flex.space-between {
+  justify-content: space-between;
+}
+
+.article-image {
+  cursor: pointer;
+}
