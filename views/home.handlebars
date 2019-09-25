@@ -1,10 +1,37 @@
 <div class="ui segment overview">
   <h2>Overview</h2>
-  <p>X Numbers of Articles</p>
-  <p>Y Articles with an Image</p>
+  <p>{{articleCounts}} Numbers of Articles</p>
+  <p>{{mediaCounts}} Articles with an Image</p>
 
-  <p>Earliest Published Date: mm/dd/yyyy hh:mm</p>
-  <p>Latest Published Date: mm/dd/yyyy hh:mm</p>
+  {{#if earliestPubDate}}
+  <p>Earliest Published Date: {{earliestPubDate}}</p>
+  {{/if}}
+  {{#if latestPubDate}}
+  <p>Latest Published Date: {{latestPubDate}}</p>
+  {{/if}}
+</div>
+
+<div class="ui segment">
+  <form class="ui form">
+    <div class="field">
+      <label>Feed URL</label>
+      <input required type="text" name="feedUrl" placeholder="Enter Feed URL and Add by press Add URL button">
+    </div>
+
+    <button class="ui button blue" type="submit">Add URL</button>
+  </form>
+
+  <div class="ui feeds-list">
+    {{#each feedUrls}}
+    <div class="item flex space-between">
+      <div class="content">
+        {{this}}
+      </div>
+      <div class="ui button mini">Delete</div>
+    </div>
+    <div class="ui divider"></div>
+    {{/each}}
+  </div>
 </div>
 
 <div class="ui segment">
@@ -23,9 +50,8 @@
     </div>
   </div>
 
-
-
   <div class="ui divided items">
+    {{#if feeds.length > 0}}
     {{#each feeds}}
     <div class="item">
       {{#if this.media}}
@@ -49,6 +75,9 @@
       </div>
     </div>
     {{/each}}
+    {{#else}}
+    <h3>Please add feed urls.</h3>
+    {{/if}}
   </div>
 
 

@@ -13,12 +13,16 @@
 .ui.items>.item .extra {
   color: rgba(0,0,0,0.6);
 }
+.ui.divider {
+  margin: 0.5rem 0;
+}
 
 
 .flex {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .flex.space-between {
   justify-content: space-between;
@@ -31,4 +35,9 @@
 .block-with-text {
   overflow: hidden;
   max-height: 2.6em; 
+}
+
+
+.feeds-list {
+  margin: 2em 1em 1em 1em;
 }

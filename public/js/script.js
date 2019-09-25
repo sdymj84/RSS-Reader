@@ -39,7 +39,6 @@ $(".article-description a").on('click', function (e) {
 $(".dropdown").dropdown({
   onChange: function (val) {
     console.log(val)
-    $.get(`?sortby=${val}`)
     $.ajax({
       url: `?sortby=${val}`,
       type: 'GET',
@@ -52,4 +51,24 @@ $(".dropdown").dropdown({
       }
     })
   }
+})
+
+
+// Add Feed URL
+$('form').submit(function (e) {
+  e.preventDefault()
+  var url = $(this).serializeArray()[0].value
+  $.ajax({
+    url: '/addUrl',
+    type: 'POST',
+    data: { feedUrl: url },
+    success: function (res) {
+      console.log('refresh??')
+      location.reload()
+    },
+    error: function (error) {
+      alert(error.responseJSON.errMsg)
+      $("form input").val("").focus()
+    }
+  })
 })
