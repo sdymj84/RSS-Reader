@@ -1,4 +1,4 @@
-<div class="ui segment">
+<div class="ui segment overview">
   <h2>Overview</h2>
   <p>X Numbers of Articles</p>
   <p>Y Articles with an Image</p>
@@ -15,17 +15,18 @@
       <label style="cursor: pointer">Sort By</label>
       <div class="default text"></div>
       <div class="menu">
-        <div class="item" data-value="0">Title</div>
-        <div class="item" data-value="1">Description</div>
-        <div class="item" data-value="2">Published Date</div>
+        <div class="item" data-value="title">Title</div>
+        <div class="item" data-value="description">Description</div>
+        <div class="item" data-value="pubDate">Published Date</div>
       </div>
       <i class="dropdown icon"></i>
     </div>
   </div>
 
 
-  {{#each feeds}}
+
   <div class="ui divided items">
+    {{#each feeds}}
     <div class="item">
       {{#if this.media}}
       <div class="image image-container">
@@ -41,12 +42,14 @@
         <div class="meta">
           <span>Description</span>
         </div>
-        <div class="description">
+        <div class="description article-description">
           <p>{{this.description}}</p>
+          <a>Read more...</a>
         </div>
       </div>
     </div>
+    {{/each}}
   </div>
-  {{/each}}
+
 
 </div>
