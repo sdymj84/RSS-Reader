@@ -55,9 +55,6 @@ router.get('/', async (req, res) => {
   const earliestPubDate = dateSortedFeeds[0].pubDate
   const latestPubDate = dateSortedFeeds[dateSortedFeeds.length - 1].pubDate
 
-  console.log({
-    order, orderType: typeof (order)
-  })
 
   // Show result
   return res.render('home', {

@@ -18,6 +18,32 @@
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-app.js"></script>
+
+  <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+  <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-analytics.js"></script>
+
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-auth.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAwHsPni-dZ30EOMAtVrXGG2VjoLnj9f5A",
+      authDomain: "rss-reader-2cce2.firebaseapp.com",
+      databaseURL: "https://rss-reader-2cce2.firebaseio.com",
+      projectId: "rss-reader-2cce2",
+      storageBucket: "",
+      messagingSenderId: "1023554959130",
+      appId: "1:1023554959130:web:c1ef4fd321c2ca7a6e1ea3",
+      measurementId: "G-1DWB7XPVR4"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
   <script src="/js/script.js"></script>
 </body>
 
