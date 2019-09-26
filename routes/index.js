@@ -16,12 +16,23 @@ const Users = require('../models/Users')
 const uuidv1 = require('uuid/v1')
 
 
+
+/*=================================================
+  / (Home page)
+  - Fetch feed urls from user DB 
+  - Parse feeds from urls and rearrange data 
+  - Send data to view
+=================================================*/
 router.get('/', async (req, res) => {
   // Get feed urls from database
-  let feedUrls = []
-  await Users.findOne({ 'uid': 'bVB6kONnFfT0Q43zURsVVcb8IA12' }, 'feedUrls', (err, user) => {
-    feedUrls = user.feedUrls
+  const user = await Users.findOne({ 'uid': 'bVB6kONnFfT0Q43zURsVVcb8IA12' }, (err, user) => {
+    if (err) {
+      console.log('Error in getting user data', err)
+    }
   })
+  const feedUrls = user.feedUrls || []
+  const sortby = user.sortby || ""
+  const order = user.order || ""
 
   if (!feedUrls.length) {
     return res.render('home', {
@@ -32,33 +43,47 @@ router.get('/', async (req, res) => {
       earliestPubDate: "",
       latestPubDate: ""
     })
-  } else {
-    console.log('else')
-    // Parse feeds and rearrange data
-    const feeds = await parseFeeds(feedUrls)
-    const sort = req.query.sortby || ""
-    const sortedFeeds = _.sortBy(feeds, sort)
-    const articleCounts = feeds.length
-    const mediaCounts = _.filter(feeds, feed => feed.media !== "").length
-    const dateSortedFeeds = _.sortBy(feeds, 'pubDate')
-    const earliestPubDate = dateSortedFeeds[0].pubDate
-    const latestPubDate = dateSortedFeeds[dateSortedFeeds.length - 1].pubDate
-
-    // Show result
-    return res.render('home', {
-      feeds: sortedFeeds,
-      feedUrls,
-      articleCounts,
-      mediaCounts,
-      earliestPubDate,
-      latestPubDate
-    })
   }
+
+
+  const feeds = await parseFeeds(feedUrls)
+  const sortedFeeds = _.sortBy(feeds, sortby)
+  order === 'true' && _.reverse(sortedFeeds)
+  const articleCounts = feeds.length
+  const mediaCounts = _.filter(feeds, feed => feed.media !== "").length
+  const dateSortedFeeds = _.sortBy(feeds, 'pubDate')
+  const earliestPubDate = dateSortedFeeds[0].pubDate
+  const latestPubDate = dateSortedFeeds[dateSortedFeeds.length - 1].pubDate
+
+  console.log({
+    order, orderType: typeof (order)
+  })
+
+  // Show result
+  return res.render('home', {
+    feeds: sortedFeeds,
+    feedUrls,
+    articleCounts,
+    mediaCounts,
+    earliestPubDate,
+    latestPubDate,
+    sortby: sortby === 'pubDate'
+      ? 'Published Date'
+      : sortby[0].toUpperCase() + sortby.slice(1, sortby.length),
+    order: order === 'true' ? 'checked' : '',
+  })
 })
 
 
+/*=================================================
+  /addUrl
+  - Validate feed url 
+  - Add new feed url to user DB 
+  - Refresh page
+=================================================*/
 router.post('/addUrl', async (req, res) => {
-  const feedUrl = req.body.feedUrl
+  let feedUrl = req.body.feedUrl
+  feedUrl = feedUrl[feedUrl.length - 1] === '/' ? feedUrl.slice(0, -1) : feedUrl
   // Validate feed url
   try {
     await parser.parseURL(feedUrl)
@@ -69,19 +94,110 @@ router.post('/addUrl', async (req, res) => {
   }
 
   // Add new feedUrl to database
-  Users.findOneAndUpdate(
+  const result = await Users.findOneAndUpdate(
     { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
-    { $push: { feedUrls: feedUrl } },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { $addToSet: { feedUrls: feedUrl } },
+    { useFindAndModify: false },
     (err, doc) => {
-      err && console.log('Error!')
-      console.log(doc)
+      if (err) {
+        console.log('Error in adding new url to DB', err)
+        res.status(500).json({
+          errMsg: "Error in adding new url to DB"
+        })
+      }
+    }
+  )
+  console.log(result)
+  return res.status(200).send("success")
+})
+
+
+/*=================================================
+  /removeUrl
+  - Remove feed url from user DB 
+  - Refresh page
+=================================================*/
+router.post('/removeUrl', async (req, res) => {
+  const feedUrl = req.body.feedUrl
+
+  // Remove feedUrl from database
+  await Users.findOneAndUpdate(
+    { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
+    { $pull: { feedUrls: feedUrl } },
+    { useFindAndModify: false },
+    (err, doc) => {
+      if (err) {
+        console.log('Error in removing url from DB', err)
+        res.status(500).json({
+          errMsg: "Error in removing url from DB"
+        })
+      }
     }
   )
   return res.status(200).send("success")
 })
 
 
+/*=================================================
+  /sortby
+  - Get sortby text from client
+  - Change sortby in database
+  - Refresh page
+=================================================*/
+router.post('/sortby', async (req, res) => {
+  // Update sortby on database
+  await Users.findOneAndUpdate(
+    { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
+    { $set: { sortby: req.body.sortby } },
+    { useFindAndModify: false },
+    (err, doc) => {
+      if (err) {
+        console.log('Error in storing sortby on DB', err)
+        res.status(500).json({
+          errMsg: "Error in storing sortby on DB"
+        })
+      }
+    }
+  )
+  return res.status(200).send("success")
+})
+
+
+/*=================================================
+  /order
+  - Get order value from client
+  - Change order in database
+  - Refresh page
+=================================================*/
+router.post('/order', async (req, res) => {
+  // Update order on database
+  await Users.findOneAndUpdate(
+    { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
+    { $set: { order: req.body.order } },
+    { useFindAndModify: false },
+    (err, doc) => {
+      if (err) {
+        console.log('Error in storing order on DB', err)
+        res.status(500).json({
+          errMsg: "Error in storing order on DB"
+        })
+      }
+    }
+  )
+  return res.status(200).send("success")
+})
+
+
+
+/*=================================================
+  Function
+  - Params: Feed url array
+  - Returns: Parsed feed array
+
+  - Iterate url array and parse feed from each url
+  - Some feed url has different format so put condition
+    to parse media accordingly
+=================================================*/
 const parseFeeds = async (feedUrls) => {
   // Parse from feed
   const feeds = []

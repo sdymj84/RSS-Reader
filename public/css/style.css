@@ -16,6 +16,12 @@
 .ui.divider {
   margin: 0.5rem 0;
 }
+.ui.default.dropdown:not(.button)>.text, .ui.dropdown:not(.button)>.default.text {
+  color: unset;
+}
+.ui.inverted.dimmer {
+  position: fixed;
+}
 
 
 .flex {
@@ -40,4 +46,8 @@
 
 .feeds-list {
   margin: 2em 1em 1em 1em;
+}
+
+.sort-order {
+  margin-left: 1em;
 }

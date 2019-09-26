@@ -7,9 +7,15 @@ const userSchema = new mongoose.Schema({
   },
   feedUrls: {
     type: [String],
+  },
+  sortby: {
+    type: String,
+  },
+  order: {
+    type: String,
   }
 })
 
-const Users = mongoose.model('Users', userSchema)
+const Users = mongoose.model('users', userSchema)
 
 module.exports = Users

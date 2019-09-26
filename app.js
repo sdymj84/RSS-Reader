@@ -7,7 +7,6 @@ const mongoose = require('mongoose')
 
 
 // MongoDB and Server Connection
-console.log(process.env.MONGO_URI)
 const PORT = process.env.PORT || 5000
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -16,6 +15,8 @@ mongoose.connect(process.env.MONGO_URI, {
   app.listen(PORT, () => {
     console.log(`Server Started on ${PORT}...`)
   })
+}).catch((e) => {
+  console.log('Error in connecting DB', e)
 });
 
 

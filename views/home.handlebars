@@ -23,7 +23,7 @@
 
   <div class="ui feeds-list">
     {{#each feedUrls}}
-    <div class="item flex space-between">
+    <div class="item flex space-between feed-url">
       <div class="content">
         {{this}}
       </div>
@@ -37,21 +37,30 @@
 <div class="ui segment">
   <div class="flex space-between">
     <h2>Articles</h2>
-    <div class="ui dropdown">
-      <input type="hidden" name="sort">
-      <label style="cursor: pointer">Sort By</label>
-      <div class="default text"></div>
-      <div class="menu">
-        <div class="item" data-value="title">Title</div>
-        <div class="item" data-value="description">Description</div>
-        <div class="item" data-value="pubDate">Published Date</div>
+    <div class="flex">
+      <div>
+        <div class="ui dropdown">
+          <input type="hidden" name="sort">
+          <label style="cursor: pointer">Sort By</label>
+          <div class="default text sortby-text">{{sortby}}</div>
+          <div class="menu">
+            <div class="item" data-value="title">Title</div>
+            <div class="item" data-value="description">Description</div>
+            <div class="item" data-value="pubDate">Published Date</div>
+          </div>
+          <i class="dropdown icon"></i>
+        </div>
       </div>
-      <i class="dropdown icon"></i>
+      <div class="ui checkbox sort-order">
+        <input type="checkbox" name="sort-order" {{order}}>
+        <label>Descend Order</label>
+      </div>
     </div>
+
   </div>
 
   <div class="ui divided items">
-    {{#if feeds.length > 0}}
+    {{#if feeds.length}}
     {{#each feeds}}
     <div class="item">
       {{#if this.media}}
@@ -75,10 +84,21 @@
       </div>
     </div>
     {{/each}}
-    {{#else}}
-    <h3>Please add feed urls.</h3>
+    {{else}}
+    <div class="ui message info">
+      <div class="header">
+        No Feed URL
+      </div>
+      <ol class="list">
+        <li>Please get feed url from the website you want to subscribe</li>
+        <li>Enter the url in input field above and click "Add URL"</li>
+      </ol>
+    </div>
     {{/if}}
   </div>
 
+</div>
 
+<div class="ui inverted dimmer article-loader">
+  <div class="ui large loader"></div>
 </div>

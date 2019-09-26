@@ -38,37 +38,80 @@ $(".article-description a").on('click', function (e) {
 // Sort Dropdown change logics
 $(".dropdown").dropdown({
   onChange: function (val) {
-    console.log(val)
+    $(".article-loader").addClass("active")
     $.ajax({
-      url: `?sortby=${val}`,
-      type: 'GET',
+      url: '/sortby',
+      type: 'POST',
+      data: { sortby: val },
       success: function (res) {
-        console.log(res)
-        // redirect('/')
+        location.reload()
       },
-      error: function () {
-        console.log('error')
+      error: function (error) {
+        alert(error.responseJSON.errMsg)
+        $(".article-loader").removeClass("active")
       }
     })
   }
 })
 
+// Sort order change
+$(".sort-order input").on('click', function () {
+  var isChecked = $(this).is(':checked')
+  $(".article-loader").addClass("active")
+  // Order descend
+  $.ajax({
+    url: '/order',
+    type: 'POST',
+    data: { order: isChecked },
+    success: function (res) {
+      location.reload()
+    },
+    error: function (error) {
+      alert(error.responseJSON.errMsg)
+      $(".article-loader").removeClass("active")
+    }
+  })
+})
+
+
 
 // Add Feed URL
 $('form').submit(function (e) {
   e.preventDefault()
+  $(".article-loader").addClass("active")
   var url = $(this).serializeArray()[0].value
+  console.log('subbmitted')
   $.ajax({
     url: '/addUrl',
     type: 'POST',
     data: { feedUrl: url },
     success: function (res) {
-      console.log('refresh??')
       location.reload()
     },
     error: function (error) {
       alert(error.responseJSON.errMsg)
+      $(".article-loader").removeClass("active")
       $("form input").val("").focus()
+    }
+  })
+})
+
+
+
+// Remove Feed URL
+$(".feed-url .button").on('click', function () {
+  $(".article-loader").addClass("active")
+  var url = $(this).prev().text().trim()
+  $.ajax({
+    url: '/removeUrl',
+    type: 'POST',
+    data: { feedUrl: url },
+    success: function (res) {
+      location.reload()
+    },
+    error: function (error) {
+      alert(error.responseJSON.errMsg)
+      $(".article-loader").removeClass("active")
     }
   })
 })
