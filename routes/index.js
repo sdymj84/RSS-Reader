@@ -1,4 +1,5 @@
 const express = require('express')
+const app = express()
 const router = express.Router()
 const Parser = require('rss-parser')
 const _ = require('lodash')
@@ -24,12 +25,18 @@ const uuidv1 = require('uuid/v1')
   - Send data to view
 =================================================*/
 router.get('/', async (req, res) => {
+  console.log(app.locals.uid)
+  if (!app.locals.uid) {
+    return res.redirect('/signin')
+  }
+
   // Get feed urls from database
   const user = await Users.findOne({ 'uid': 'bVB6kONnFfT0Q43zURsVVcb8IA12' }, (err, user) => {
     if (err) {
       console.log('Error in getting user data', err)
     }
   })
+
   const feedUrls = user.feedUrls || []
   const sortby = user.sortby || ""
   const order = user.order || ""
@@ -183,6 +190,24 @@ router.post('/order', async (req, res) => {
   )
   return res.status(200).send("success")
 })
+
+
+
+router.get('/signin', async (req, res) => {
+  if (app.locals.uid) {
+    return res.redirect('/')
+  }
+  res.render('signin')
+})
+
+router.post('/signin', (req, res) => {
+  app.locals.uid = req.body.uid
+})
+
+router.post('/signout', (req, res) => {
+  app.locals.uid = ""
+})
+
 
 
 

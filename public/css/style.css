@@ -1,3 +1,7 @@
+body {
+  background-color: #dcdcdcbf;
+}
+
 .ui .title {
   font-size: 1.5em;
 }
@@ -22,6 +26,14 @@
 .ui.inverted.dimmer {
   position: fixed;
 }
+.ui.button.nice {
+  background-color: #386d81;
+  color: white;
+}
+.ui.button.nice:hover {
+  background-color: #00425a;
+}
+
 
 
 .flex {
@@ -50,4 +62,26 @@
 
 .sort-order {
   margin-left: 1em;
+}
+
+.signin-container .segment {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 3em;
+  padding: 2em;
+}
+.signin-container {
+  margin-top: 5em;
+}
+.signin-box h2 {
+  text-align: center;
+  color: #00425a;
+}
+.signup-box h2 {
+  text-align: center;
+  color: #915e00;
+}
+
+.hide {
+  display: none !important;
 }
