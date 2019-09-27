@@ -28,7 +28,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', require('./routes/index'))
 
+app.use((req, res) => {
+  res.status(404)
 
-
+  res.render('404')
+})
 
 

@@ -152,7 +152,50 @@ $("form.signin").submit(function (e) {
 // Sign Up
 $("form.signup").submit(function (e) {
   e.preventDefault()
-  alert('sign up')
+  var inputs = $(this).serializeArray()
+  var user = {}
+  inputs.forEach(input => {
+    user[input.name] = input.value
+  })
+
+  // Check password confirmation
+  if (user.password !== user.confirmPassword) {
+    alert("Password don't match with the confirmation")
+    $('form.signup input:nth(1), form.signup input:nth(2)').val('')
+    $('form.signup input:nth(1)').focus()
+    return
+  }
+
+  firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
+    .then(function (res) {
+      $.ajax({
+        url: '/signup',
+        type: 'POST',
+        data: { uid: res.user.uid },
+        success: function (res) {
+          window.location.replace('/')
+        },
+        error: function (error) {
+          console.log(error)
+        }
+      })
+
+    })
+    .catch(function (error) {
+      var errorCode = error.code
+      var errorMessage = error.message
+      console.log({ errorCode, errorMessage })
+      alert(errorCode + ': ' + errorMessage)
+      switch (errorCode) {
+        case 'auth/weak-password':
+          $('form.signup input:nth(1), form.signup input:nth(2)').val('')
+          $('form.signup input:nth(1)').focus()
+          break;
+        default:
+          $('form.signup input').val('')
+          break;
+      }
+    })
 })
 
 // Sign out
@@ -194,3 +237,11 @@ firebase.auth().onAuthStateChanged(function (user) {
     $('.nav-signout').addClass('hide')
   }
 })
+
+
+if ($(window).width() < 600) {
+  console.log('mobile')
+  $(".sign-divider").hide()
+  $(".signin-container").css({ 'margin-top': '0' })
+  $(".signup-box").prepend("<div style='text-align: center; font-weight: bold;'>Don't have account yet? Please signup below</div>")
+}

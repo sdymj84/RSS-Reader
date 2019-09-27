@@ -25,13 +25,12 @@ const uuidv1 = require('uuid/v1')
   - Send data to view
 =================================================*/
 router.get('/', async (req, res) => {
-  console.log(app.locals.uid)
   if (!app.locals.uid) {
     return res.redirect('/signin')
   }
 
   // Get feed urls from database
-  const user = await Users.findOne({ 'uid': 'bVB6kONnFfT0Q43zURsVVcb8IA12' }, (err, user) => {
+  const user = await Users.findOne({ 'uid': app.locals.uid }, (err, user) => {
     if (err) {
       console.log('Error in getting user data', err)
     }
@@ -71,9 +70,11 @@ router.get('/', async (req, res) => {
     mediaCounts,
     earliestPubDate,
     latestPubDate,
-    sortby: sortby === 'pubDate'
-      ? 'Published Date'
-      : sortby[0].toUpperCase() + sortby.slice(1, sortby.length),
+    sortby: sortby
+      ? sortby === 'pubDate'
+        ? 'Published Date'
+        : sortby[0].toUpperCase() + sortby.slice(1, sortby.length)
+      : "",
     order: order === 'true' ? 'checked' : '',
   })
 })
@@ -99,7 +100,7 @@ router.post('/addUrl', async (req, res) => {
 
   // Add new feedUrl to database
   const result = await Users.findOneAndUpdate(
-    { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
+    { uid: app.locals.uid },
     { $addToSet: { feedUrls: feedUrl } },
     { useFindAndModify: false },
     (err, doc) => {
@@ -111,7 +112,6 @@ router.post('/addUrl', async (req, res) => {
       }
     }
   )
-  console.log(result)
   return res.status(200).send("success")
 })
 
@@ -126,7 +126,7 @@ router.post('/removeUrl', async (req, res) => {
 
   // Remove feedUrl from database
   await Users.findOneAndUpdate(
-    { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
+    { uid: app.locals.uid },
     { $pull: { feedUrls: feedUrl } },
     { useFindAndModify: false },
     (err, doc) => {
@@ -151,7 +151,7 @@ router.post('/removeUrl', async (req, res) => {
 router.post('/sortby', async (req, res) => {
   // Update sortby on database
   await Users.findOneAndUpdate(
-    { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
+    { uid: app.locals.uid },
     { $set: { sortby: req.body.sortby } },
     { useFindAndModify: false },
     (err, doc) => {
@@ -176,7 +176,7 @@ router.post('/sortby', async (req, res) => {
 router.post('/order', async (req, res) => {
   // Update order on database
   await Users.findOneAndUpdate(
-    { uid: 'bVB6kONnFfT0Q43zURsVVcb8IA12' },
+    { uid: app.locals.uid },
     { $set: { order: req.body.order } },
     { useFindAndModify: false },
     (err, doc) => {
@@ -206,6 +206,26 @@ router.post('/signin', (req, res) => {
 
 router.post('/signout', (req, res) => {
   app.locals.uid = ""
+})
+
+router.post('/signup', async (req, res) => {
+  // Save user data into database
+  await Users.create({
+    uid: req.body.uid,
+    feedUrls: [],
+    sortby: "",
+    order: "",
+  }, (err, doc) => {
+    if (err) {
+      console.log('Error in storing user data on DB', err)
+      res.status(500).json({
+        errMsg: "Error in storing user data on DB"
+      })
+    }
+  })
+
+  // Send result back to client
+  res.status(200).send('success')
 })
 
 
