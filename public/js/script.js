@@ -120,6 +120,7 @@ $(".feed-url .button").on('click', function () {
 // Sign In
 $("form.signin").submit(function (e) {
   e.preventDefault()
+  $(".article-loader").addClass("active")
   var inputs = $(this).serializeArray()
   var user = {}
   inputs.forEach(input => {
@@ -135,6 +136,7 @@ $("form.signin").submit(function (e) {
       var errorMessage = error.message
       console.log({ errorCode, errorMessage })
       alert(errorCode + ': ' + errorMessage)
+      $(".article-loader").removeClass("active")
       switch (errorCode) {
         case 'auth/user-not-found':
           $('form.signin input').val('')
@@ -152,6 +154,7 @@ $("form.signin").submit(function (e) {
 // Sign Up
 $("form.signup").submit(function (e) {
   e.preventDefault()
+  $(".article-loader").addClass("active")
   var inputs = $(this).serializeArray()
   var user = {}
   inputs.forEach(input => {
@@ -177,6 +180,7 @@ $("form.signup").submit(function (e) {
         },
         error: function (error) {
           console.log(error)
+          $(".article-loader").removeClass("active")
         }
       })
 
@@ -186,6 +190,7 @@ $("form.signup").submit(function (e) {
       var errorMessage = error.message
       console.log({ errorCode, errorMessage })
       alert(errorCode + ': ' + errorMessage)
+      $(".article-loader").removeClass("active")
       switch (errorCode) {
         case 'auth/weak-password':
           $('form.signup input:nth(1), form.signup input:nth(2)').val('')
