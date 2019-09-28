@@ -237,7 +237,7 @@ router.post('/signup', async (req, res) => {
 
 
 /*=================================================
-  Function
+  parseFeed function
   - Params: Feed url array
   - Returns: Parsed feed array
 
