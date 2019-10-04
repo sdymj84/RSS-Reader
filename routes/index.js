@@ -42,19 +42,24 @@ router.get('/', async (req, res) => {
   const sortby = user.sortby || ""
   const order = user.order || ""
 
+  const noFeed = {
+    feeds: [],
+    feedUrls: [],
+    articleCounts: 0,
+    mediaCounts: 0,
+    earliestPubDate: "",
+    latestPubDate: ""
+  }
   if (!feedUrls.length) {
-    return res.render('home', {
-      feeds: [],
-      feedUrls: [],
-      articleCounts: 0,
-      mediaCounts: 0,
-      earliestPubDate: "",
-      latestPubDate: ""
-    })
+    return res.render('home', nofeed)
   }
 
-
   const feeds = await parseFeeds(feedUrls)
+  const error = _.find(feeds, 'error')
+  if (error) {
+    console.log(error)
+    return res.render('home', { ...noFeed, error: error.error })
+  }
   const sortedFeeds = _.sortBy(feeds, sortby)
   order === 'true' && _.reverse(sortedFeeds)
   const articleCounts = feeds.length
@@ -235,7 +240,7 @@ router.post('/signup', async (req, res) => {
 
 
 /*=================================================
-  Function
+  parseFeed function
   - Params: Feed url array
   - Returns: Parsed feed array
 
@@ -279,8 +284,10 @@ const parseFeeds = async (feedUrls) => {
         })
       });
     } catch (e) {
-      console.error('Error in fetching the feed')
-      return { error: e }
+      console.error('Error in fetching the feed', e)
+      feeds.push({
+        error: e
+      })
     }
   }))
 
