@@ -25,6 +25,8 @@ const uuidv1 = require('uuid/v1')
   - Send data to view
 =================================================*/
 router.get('/', async (req, res) => {
+
+  console.log(app.locals.uid)
   if (!app.locals.uid) {
     return res.redirect('/signin')
   }
@@ -206,6 +208,7 @@ router.post('/signin', (req, res) => {
 
 router.post('/signout', (req, res) => {
   app.locals.uid = ""
+  console.log("signout : ", app.locals.uid)
 })
 
 router.post('/signup', async (req, res) => {
