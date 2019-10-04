@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
     latestPubDate: ""
   }
   if (!feedUrls.length) {
-    return res.render('home', nofeed)
+    return res.render('home', noFeed)
   }
 
   const feeds = await parseFeeds(feedUrls)
