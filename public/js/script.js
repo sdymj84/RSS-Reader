@@ -205,17 +205,20 @@ $("form.signup").submit(function (e) {
 
 // Sign out
 function signout() {
+  console.log('1')
   firebase.auth().signOut().then(function () {
     console.log('Signed out successfully')
     $.ajax({
       url: '/signout',
       type: 'POST',
       data: {},
+      success: function (res) {
+        window.location.replace('/signin')
+      },
       error: function (error) {
         console.error(error)
       }
     })
-    window.location.replace('/signin')
   }).catch(function (error) {
     console.error('Error on sign out', error)
   })
